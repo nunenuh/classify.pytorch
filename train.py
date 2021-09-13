@@ -48,7 +48,7 @@ if __name__ == "__main__":
     vacc, vloss, last_epoch = metrics['val_step_acc'], metrics['val_step_loss'], metrics['epoch']
     
     filename = f'mobilenet_v2-{last_epoch:02d}_acc{vacc:.4f}_loss{vloss:.4f}.pth'
-    saved_filename = str(Path('weight').joinpath(filename))
+    saved_filename = str(Path('weights').joinpath(filename))
     
     logging.info(f"Prepare to save training results to path {saved_filename}")
     torch.save(mobilenetv2.model.state_dict(), saved_filename)
