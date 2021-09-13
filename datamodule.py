@@ -2,13 +2,13 @@ import pytorch_lightning as pl
 from torch.utils.data import random_split, DataLoader
 
 # Note - you must have torchvision installed for this example
-from torchvision.datasets import DatasetFolder
+from torchvision.datasets import DatasetFolder, ImageFolder
 from torchvision import transforms
 from typing import *
 import torch
 
 
-class ClassifyDataset(DatasetFolder):
+class ClassifyDataset(ImageFolder):
     def __init__(self, root, transforms, train=True, split_val=0.2):
         super(ClassifyDataset, self).__init__(root, transforms)
         self.train = train
