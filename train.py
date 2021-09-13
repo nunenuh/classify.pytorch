@@ -23,7 +23,7 @@ if __name__ == "__main__":
     model_checkpoint = pl.callbacks.ModelCheckpoint(
         dirpath='checkpoint/',
         save_top_k=1,
-        filename="mobilenet_v2-{epoch:02d}-{val_step_loss:.2f}-{val_step_acc:.2f}",
+        filename="mobilenet_v2-{epoch:02d}-{val_step_loss:.4f}-{val_step_acc:.4f}",
         verbose=True,
         monitor='val_step_loss',
         mode='min',
