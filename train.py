@@ -12,6 +12,9 @@ import logging
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default=None)
+    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--num_workers', type=int, default=16)
+    
     
     parser = pl.Trainer.add_argparse_args(parser)
     hparams = parser.parse_args()
