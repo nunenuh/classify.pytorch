@@ -3,6 +3,7 @@ import pytorch_lightning as pl
 from datamodule import ClassifyDataModule
 from module import MobileNetV2
 from pytorch_lightning.callbacks import ModelCheckpoint
+import mlflow
 
 
 
@@ -14,6 +15,9 @@ if __name__ == "__main__":
     hparams = parser.parse_args()
     
     dict_args = vars(hparams)
+    
+    mlflow.set_tracking_uri("http://localhost:54849")
+    mlflow.pytorch.autolog()
     
     datamod = ClassifyDataModule(**dict_args)
     mobilenetv2 = MobileNetV2(**dict_args)
@@ -30,7 +34,8 @@ if __name__ == "__main__":
     )
     
     trainer = pl.Trainer.from_argparse_args(hparams, callbacks=model_checkpoint)
-    trainer.fit(mobilenetv2, datamod)
+    with mlflow.start_run() as run:
+        trainer.fit(mobilenetv2, datamod)
     trainer.save_checkpoint("checkpoints/latest.ckpt")
     # mobilenetv2.model.state_dict()
     
