@@ -4,7 +4,9 @@ from datamodule import ClassifyDataModule
 from module import MobileNetV2
 from pytorch_lightning.callbacks import ModelCheckpoint
 import mlflow
-
+from pathlib import Path
+import torch
+import logging
 
 
 if __name__ == "__main__":
@@ -38,6 +40,15 @@ if __name__ == "__main__":
         trainer.fit(mobilenetv2, datamod)
     trainer.save_checkpoint("checkpoints/latest.ckpt")
     # mobilenetv2.model.state_dict()
+    
+    metrics =  trainer.logged_metrics
+    vacc, vloss, last_epoch = metrics['val_step_acc'], metrics['val_step_loss'], metrics['epoch']
+    
+    filename = f'mobilenet_v2-{last_epoch:02d}_acc{vacc:.4f}_loss{vloss:.4f}.pth'
+    saved_filename = str(Path('weight').joinpath(filename))
+    
+    logging.info(f"Prepare to save training results to path {saved_filename}")
+    torch.save(mobilenetv2.model.state_dict(), saved_filename)
     
     
     
