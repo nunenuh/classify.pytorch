@@ -8,6 +8,27 @@ from typing import *
 import torch
 
 
+
+def transform_fn(train=False, size=224):
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], 
+                                     std=[0.229, 0.224, 0.225])
+    
+    if train:                                 
+        return transforms.Compose([
+            transforms.RandomResizedCrop(size),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ])
+    else:
+        return transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(size),
+            transforms.ToTensor(),
+            normalize,
+        ])
+
+
 class ClassifyDataset(ImageFolder):
     def __init__(self, root, transforms, train=True, split_val=0.2):
         super(ClassifyDataset, self).__init__(root, transforms)
@@ -28,6 +49,13 @@ class ClassifyDataset(ImageFolder):
         else:
             self.samples = self.valid_samples
 
+    @property
+    def idx_to_class(self):
+        i2c = {}
+        for key, val in self.class_to_idx.items():
+            i2c[val]=key
+        return i2c
+
         
 class ClassifyDataModule(pl.LightningDataModule):
     def __init__(self, data_dir: str, batch_size: int = 32, num_workers: int = 16, **kwargs):
@@ -36,21 +64,8 @@ class ClassifyDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
         self.num_workers = num_workers
         
-        self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        
-        self.train_transform = transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            self.normalize,
-        ])
-        
-        self.valid_transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            self.normalize,
-        ])
+        self.train_transform = transform_fn(train=True)
+        self.valid_transform = transform_fn(train=False)
         
     def setup(self, stage: Optional[str] = None):
         self.classify_trainset = ClassifyDataset(self.data_dir, transforms=self.train_transform, train=True)

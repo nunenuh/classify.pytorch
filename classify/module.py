@@ -7,7 +7,6 @@ import torchvision.models as models
 import torchmetrics 
 
 
-
 class MobileNetV2(pl.LightningModule):
     def __init__(self, pretrained=True, num_classes=2, lr=0.005, **kwargs):
         super().__init__()

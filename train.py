@@ -1,12 +1,14 @@
-import argparse
-import pytorch_lightning as pl
-from datamodule import ClassifyDataModule
-from module import MobileNetV2
-from pytorch_lightning.callbacks import ModelCheckpoint
-import mlflow
 from pathlib import Path
-import torch
 import logging
+import argparse
+
+import torch
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
+
+from classify.datamodule import ClassifyDataModule
+from classify.module import MobileNetV2
+import mlflow
 
 
 if __name__ == "__main__":
@@ -30,7 +32,7 @@ if __name__ == "__main__":
     # model_checkpoint = ModelCheckpoint(monitor="val_step_loss")
     
     model_checkpoint = pl.callbacks.ModelCheckpoint(
-        dirpath='checkpoint/',
+        dirpath='checkpoints/',
         save_top_k=1,
         filename="mobilenet_v2-{epoch:02d}-{val_step_loss:.4f}-{val_step_acc:.4f}",
         verbose=True,
