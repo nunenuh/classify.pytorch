@@ -1,9 +1,16 @@
-from classify.predictor import MobileNetClassify
+from classify.predictor import MobileNetClassify, MobileNetClassifyOnnx
 import time
 import fire
 
-def predict(impath, weight='weights/mobilenet_v2-09_acc0.9989_loss0.0051.pth',topk=1):
-    model = MobileNetClassify(weight=weight,topk=topk)
+def predict(impath, weight='weights/mobilenet_v2-09_acc0.9989_loss0.0051.pth',
+            idx2class="weights/idcard_classname.json", topk=1, mode='torch'):
+    if mode=="torch":
+        model = MobileNetClassify(weight=weight, topk=topk, idx2class=idx2class)
+    elif mode=='onnx':
+        model = MobileNetClassifyOnnx(weight=weight, topk=topk, idx2class=idx2class)
+    else:
+        raise Exception("Only torch and onnx mode are supported!")
+    
     start_time = time.time()
     
     result = model.predict(impath)
