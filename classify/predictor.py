@@ -134,8 +134,10 @@ class MobileNetClassifyOnnx(object):
     def _init_session(self):
         if self.weight:
             self.session = ort.InferenceSession(self.weight)
-        providers = [self._providers.get(self.device, "cpu")]
-        self.session.set_providers(providers)
+            
+        if ort.get_device() == 'GPU':
+            providers = [self._providers.get(self.device, "cpu")]
+            self.session.set_providers(providers)
         
     def _init_idx2class(self):
         if type(self._idx2class) == type(None):
